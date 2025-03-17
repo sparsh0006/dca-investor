@@ -11,11 +11,14 @@ export interface IInvestmentPlan extends Document {
   totalInvested: number;
   createdAt: Date;
   updatedAt: Date;
+  executionCount: number; // Add this field to track number of executions
+  initialAmount: number; // Original amount set by user
 }
 
 const InvestmentPlanSchema: Schema = new Schema({
   userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   amount: { type: Number, required: true },
+  initialAmount: { type: Number, required: true },  // Store the original amount
   frequency: { 
     type: String, 
     required: true,
@@ -24,9 +27,10 @@ const InvestmentPlanSchema: Schema = new Schema({
   toAddress: { type: String, required: true },
   isActive: { type: Boolean, default: true },
   lastExecutionTime: { type: Date, default: null },
-  totalInvested: { type: Number, default: 0 }
+  totalInvested: { type: Number, default: 0 },
+  executionCount: { type: Number, default: 0 }  // Track number of executions
 }, {
   timestamps: true
 });
 
-export const InvestmentPlan = mongoose.model<IInvestmentPlan>('InvestmentPlan', InvestmentPlanSchema); 
+export const InvestmentPlan = mongoose.model<IInvestmentPlan>('InvestmentPlan', InvestmentPlanSchema);

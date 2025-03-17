@@ -668,3 +668,13 @@
 {"level":"info","message":"Processing pubKey with length: 44","timestamp":"2025-03-16T14:09:24.454Z"}
 {"level":"info","message":"Creating transaction with chainId: injective-888, account: 760270, sequence: 8","timestamp":"2025-03-16T14:09:24.455Z"}
 {"level":"info","message":"Transaction prepared successfully, returning to client","timestamp":"2025-03-16T14:09:24.461Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-03-17T18:23:39.129Z"}
+{"level":"info","message":"Server is running on port 8000","timestamp":"2025-03-17T18:23:39.144Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-03-17T18:49:23.846Z"}
+{"level":"info","message":"Server is running on port 8000","timestamp":"2025-03-17T18:49:23.857Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-03-17T19:36:34.253Z"}
+{"level":"info","message":"Server is running on port 8000","timestamp":"2025-03-17T19:36:34.263Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-03-17T19:39:59.784Z"}
+{"level":"info","message":"Server is running on port 8000","timestamp":"2025-03-17T19:39:59.791Z"}
+{"level":"info","message":"Connected to MongoDB","timestamp":"2025-03-17T19:52:04.680Z"}
+{"level":"info","message":"Server is running on port 8000","timestamp":"2025-03-17T19:52:04.692Z"}

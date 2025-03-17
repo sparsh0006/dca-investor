@@ -5,6 +5,7 @@ import { InvestmentPlan, IInvestmentPlan } from '../models/InvestmentPlan';
 import { User, IUser } from '../models/User';
 import cron from 'node-cron';
 import { logger } from '../utils/logger';
+import { analyzeTokenPrice } from './PriceAnalysisService';
 
 export class DCAService {
   private plugin: DCAPlugin;
@@ -45,17 +46,41 @@ export class DCAService {
         throw new Error('User not found');
       }
 
+      // Calculate the execution amount based on price analysis (only after first execution)
+      let executionAmount = plan.amount;
+
+      // If this is not the first execution, apply the AI-based factor
+      if (plan.executionCount > 0) {
+        // Get price analysis for Injective token
+        const analysis = await analyzeTokenPrice('injective-protocol');
+        
+        // Apply the price factor to the initial amount
+        executionAmount = plan.initialAmount * analysis.priceFactor;
+        
+        logger.info(`Plan ${plan._id}: Applying price factor ${analysis.priceFactor}. 
+          Initial amount: ${plan.initialAmount}, Adjusted amount: ${executionAmount}`);
+      }
+
+      // Execute the transaction with the calculated amount
       const txHash = await this.plugin.sendTransaction(
-        plan.amount,
+        executionAmount,
         user.address,
         plan.toAddress
       );
 
+      // Update plan data
       plan.lastExecutionTime = new Date();
-      plan.totalInvested += plan.amount;
+      plan.totalInvested += executionAmount;
+      plan.executionCount += 1;
+      
+      // After first execution, update the amount with the new calculated amount
+      if (plan.executionCount === 1) {
+        plan.initialAmount = plan.amount; // Save the initial amount
+      }
+      
       await plan.save();
 
-      logger.info(`Successfully executed DCA plan: ${plan._id}, txHash: ${txHash}`);
+      logger.info(`Successfully executed DCA plan: ${plan._id}, txHash: ${txHash}, amount: ${executionAmount}`);
     } catch (error) {
       logger.error(`Failed to execute DCA plan: ${plan._id}`, error);
     }
@@ -75,7 +100,9 @@ export class DCAService {
     const plan = await InvestmentPlan.create({
       userId,
       ...planData,
-      isActive: true
+      initialAmount: planData.amount, // Store the initial amount
+      isActive: true,
+      executionCount: 0
     });
 
     this.schedulePlan(plan);
@@ -111,4 +138,4 @@ export class DCAService {
     ]);
     return result.length > 0 ? result[0].total : 0;
   }
-} 
+}
